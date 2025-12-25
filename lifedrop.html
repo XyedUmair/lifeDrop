@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeDrop</title>
+
+<style>
+:root {
+  --bg: #0F172A;
+  --surface: #1E293B;
+  --accent: #3B82F6;
+  --text: #E5E7EB;
+  --muted: #94A3B8;
+}
+
+.light {
+  --bg: #F8FAFC;
+  --surface: #E5E7EB;
+  --accent: #2563EB;
+  --text: #0F172A;
+  --muted: #475569;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+h1 {
+  margin: 0 0 10px;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+input, button {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+input {
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.toggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: var(--surface);
+  border-radius: 50px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.counter {
+  margin-top: 40px;
+  text-align: center;
+  font-size: clamp(36px, 8vw, 80px);
+  font-weight: 700;
+  height: 90px;
+  overflow: hidden;
+  position: relative;
+}
+
+.number {
+  position: absolute;
+  width: 100%;
+  transition: transform 0.6s ease, opacity 0.6s ease, filter 0.6s ease;
+}
+
+.fall {
+  transform: translateY(80px);
+  opacity: 0;
+  filter: blur(6px);
+}
+
+.bottom-text {
+  margin-top: 50px;
+  text-align: center;
+  font-size: clamp(18px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+</style>
+</head>
+
+<body>
+<div class="toggle" onclick="toggleMode()">🌗</div>
+
+<div class="container">
+  <div class="card" id="inputCard">
+    <h1>LIFEDROP</h1>
+    <div class="subtitle">Every second falls</div>
+
+    <input type="date" id="dob" required>
+    <input type="number" id="guess" placeholder="Guess your life (years) — optional">
+    <button onclick="startLife()">START</button>
+  </div>
+
+  <div class="card" id="counterCard" style="display:none;">
+    <div class="counter">
+      <div class="number" id="currentNumber">0</div>
+    </div>
+
+    <div class="bottom-text">
+      TIME IS FALLING. YOU ARE NOT WAITING.
+    </div>
+  </div>
+</div>
+
+<script>
+let secondsLeft;
+let interval;
+let current = document.getElementById("currentNumber");
+
+function startLife() {
+  const dob = document.getElementById("dob").value;
+  if (!dob) return alert("Please select Date of Birth");
+
+  let guess = document.getElementById("guess").value;
+  if (!guess) guess = 60;
+
+  secondsLeft = guess * 365 * 24 * 60 * 60;
+
+  document.getElementById("inputCard").style.display = "none";
+  document.getElementById("counterCard").style.display = "block";
+
+  current.textContent = secondsLeft.toLocaleString();
+
+  interval = setInterval(() => {
+    animateDecrease();
+  }, 1000);
+}
+
+function animateDecrease() {
+  secondsLeft--;
+  const next = document.createElement("div");
+  next.className = "number";
+  next.textContent = secondsLeft.toLocaleString();
+
+  current.classList.add("fall");
+  document.querySelector(".counter").appendChild(next);
+
+  setTimeout(() => {
+    current.remove();
+    current = next;
+  }, 600);
+}
+
+function toggleMode() {
+  document.body.classList.toggle("light");
+}
+</script>
+</body>
+</html>
